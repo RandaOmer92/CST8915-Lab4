@@ -33,3 +33,10 @@ Each container gets its own writable layer so that containers stay separate and 
 ### 4. What are the benefits of using Docker Compose over running containers individually?
 
 Docker Compose lets me describe my whole app in one file (`docker-compose.yml`) and start everything with one command. With `docker compose up -d`, Docker built my web app, downloaded Redis, created a network and a volume, and started both containers in the right order. Without Compose, I would need to run many long `docker` commands by hand. Compose also makes the containers talk to each other easily: my web app found Redis just by using the name `redis`. It also makes it easy to manage the app (stop, start, view logs, remove everything) and to scale it, for example running three web containers with `--scale web=3`. The volume also kept my data, so the visit counter was saved even after the containers were removed with `docker compose down`.
+---
+
+## Challenges and Lessons Learned
+
+- **Pasting multi-line commands:** At first, I pasted only the first line of a `cat > file << 'EOF'` command, so the file was saved with the wrong text. I learned to copy the whole block, including the last `EOF` line.
+- **Port already in use:** Before starting Docker Compose, I had to stop my earlier container (`python-app`), because it was already using port 80. Two containers cannot use the same host port.
+- **Changing the Compose file back:** After the scaling step, I forgot to change `docker-compose.yml` back to `"80:5000"`, so the app started on a random port. I learned to check the file before running it.
